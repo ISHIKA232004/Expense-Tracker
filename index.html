@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Chart.js for Graphs (Bonus Feature) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!--HEADER-->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-chart-pie"></i>
+                    <div class="logo-text">
+                        <h1>Expense Tracker</h1>
+                        <p class="tagline">Track, Manage, Save</p>
+                    </div>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Transactions</span>
+                        <span class="stat-value" id="total-transactions">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Today</span>
+                        <span class="stat-value" id="today-date">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!--MAIN CONTENT-->
+        <main class="main-content">
+            <!-- LEFT COLUMN: Input & Summary -->
+            <div class="left-column">
+                <!-- Summary Cards -->
+                <section class="summary-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i> Financial Summary
+                    </h2>
+                    <div class="summary-cards">
+                        <div class="summary-card card-income">
+                            <div class="card-icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Total Income</h3>
+                                <p class="card-amount" id="total-income">$0.00</p>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-card card-expense">
+                            <div class="card-icon">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Total Expenses</h3>
+                                <p class="card-amount" id="total-expenses">$0.00</p>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-card card-balance">
+                            <div class="card-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Net Balance</h3>
+                                <p class="card-amount" id="net-balance">$0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Add Transaction Form -->
+                <section class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-plus-circle"></i> Add New Transaction
+                    </h2>
+                    <form id="transaction-form" class="transaction-form">
+                        <!-- Transaction Type -->
+                        <div class="form-group">
+                            <label for="type" class="form-label">
+                                <i class="fas fa-exchange-alt"></i> Transaction Type
+                            </label>
+                            <div class="type-selector">
+                                <button type="button" class="type-option active" data-type="income">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>Income</span>
+                                </button>
+                                <button type="button" class="type-option" data-type="expense">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Expense</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="type" name="type" value="income" required>
+                        </div>
+
+                        <!-- Amount Input -->
+                        <div class="form-group">
+                            <label for="amount" class="form-label">
+                                <i class="fas fa-money-bill-wave"></i> Amount
+                            </label>
+                            <div class="amount-input">
+                                <span class="currency">$</span>
+                                <input type="number" 
+                                       id="amount" 
+                                       name="amount" 
+                                       placeholder="0.00" 
+                                       min="0.01" 
+                                       step="0.01" 
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-edit"></i> Description
+                            </label>
+                            <input type="text" 
+                                   id="description" 
+                                   name="description" 
+                                   placeholder="Enter transaction description" 
+                                   required>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="form-group">
+                            <label for="date" class="form-label">
+                                <i class="far fa-calendar"></i> Date
+                            </label>
+                            <input type="date" 
+                                   id="date" 
+                                   name="date" 
+                                   required>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-tags"></i> Category
+                            </label>
+                            <div class="category-grid">
+                                <!-- Income Categories -->
+                                <div class="category-option" data-category="salary" data-type="income">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Salary</span>
+                                </div>
+                                <div class="category-option" data-category="freelance" data-type="income">
+                                    <i class="fas fa-laptop-code"></i>
+                                    <span>Freelance</span>
+                                </div>
+                                <div class="category-option" data-category="investment" data-type="income">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Investment</span>
+                                </div>
+                                <div class="category-option" data-category="other-income" data-type="income">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                    <span>Other Income</span>
+                                </div>
+                                
+                                <!-- Expense Categories -->
+                                <div class="category-option" data-category="food" data-type="expense">
+                                    <i class="fas fa-utensils"></i>
+                                    <span>Food</span>
+                                </div>
+                                <div class="category-option" data-category="transport" data-type="expense">
+                                    <i class="fas fa-car"></i>
+                                    <span>Transport</span>
+                                </div>
+                                <div class="category-option" data-category="shopping" data-type="expense">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    <span>Shopping</span>
+                                </div>
+                                <div class="category-option" data-category="entertainment" data-type="expense">
+                                    <i class="fas fa-gamepad"></i>
+                                    <span>Entertainment</span>
+                                </div>
+                                <div class="category-option" data-category="bills" data-type="expense">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span>Bills</span>
+                                </div>
+                                <div class="category-option" data-category="health" data-type="expense">
+                                    <i class="fas fa-heartbeat"></i>
+                                    <span>Health</span>
+                                </div>
+                                <div class="category-option" data-category="education" data-type="expense">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>Education</span>
+                                </div>
+                                <div class="category-option" data-category="other" data-type="expense">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                    <span>Other</span>
+                                </div>
+                            </div>
+                            <input type="hidden" id="category" name="category" value="salary" required>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> Clear
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Transaction
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <!-- RIGHT COLUMN: Transactions & Charts -->
+            <div class="right-column">
+
+                <section class="filter-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-filter"></i> Filter Transactions
+                    </h2>
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label for="filter-category">
+                                <i class="fas fa-tag"></i> Category
+                            </label>
+                            <select id="filter-category">
+                                <option value="all">All Categories</option>
+                                <!-- Categories will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="filter-type">
+                                <i class="fas fa-exchange-alt"></i> Type
+                            </label>
+                            <select id="filter-type">
+                                <option value="all">All Types</option>
+                                <option value="income">Income Only</option>
+                                <option value="expense">Expense Only</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="filter-date">
+                                <i class="far fa-calendar-alt"></i> Date Range
+                            </label>
+                            <select id="filter-date">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                                <!-- <option value="custom">Custom Range</option> -->
+                            </select>
+                        </div>
+                        
+                        <!-- <div class="filter-group custom-date-range" id="custom-date-range" style="display: none;">
+                            <div class="date-inputs">
+                                <input type="date" id="start-date" placeholder="Start Date">
+                                <span class="date-separator">to</span>
+                                <input type="date" id="end-date" placeholder="End Date">
+                            </div>
+                        </div> -->
+                        
+                        <button id="clear-filters" class="btn btn-outline">
+                            <i class="fas fa-times"></i> Clear Filters
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Transactions List -->
+                <section class="transactions-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-history"></i> Transaction History
+                        </h2>
+                        <div class="section-actions">
+                            <button id="export-btn" class="btn btn-outline" title="Export Data">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button id="delete-all-btn" class="btn btn-danger" title="Delete All">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="transactions-container">
+                        <div class="transactions-header">
+                            <span class="header-date">Date</span>
+                            <span class="header-description">Description</span>
+                            <span class="header-category">Category</span>
+                            <span class="header-amount">Amount</span>
+                            <span class="header-actions">Actions</span>
+                        </div>
+                        
+                        <div class="transactions-list" id="transactions-list">
+                            <!-- Transactions will be loaded here by JavaScript -->
+                            <div class="empty-state">
+                                <i class="fas fa-receipt fa-3x"></i>
+                                <h3>No Transactions Yet</h3>
+                                <p>Add your first transaction to get started!</p>
+                            </div>
+                        </div>
+                        
+                        <div class="transactions-footer">
+                            <div class="transactions-info">
+                                <span id="transactions-count">0 transactions</span>
+                                <span id="transactions-total">Total: $0.00</span>
+                            </div>
+                            <div class="pagination">
+                                <button class="pagination-btn" id="prev-btn" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <span class="page-info">Page <span id="current-page">1</span> of <span id="total-pages">1</span></span>
+                                <button class="pagination-btn" id="next-btn" disabled>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Charts Section-->
+                <section class="charts-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-pie"></i> Financial Charts
+                    </h2>
+                    <div class="charts-container">
+                        <div class="chart-wrapper">
+                            <h3>Expense Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="expense-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-wrapper">
+                            <h3>Monthly Overview</h3>
+                            <div class="chart-container">
+                                <canvas id="monthly-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!--FOOTER-->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Expense Tracker</span>
+                    </div>
+                    <p class="footer-description">
+                        Track your income and expenses easily.
+                    </p>
+                </div>
+                
+                <!-- <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#" id="export-data-link"><i class="fas fa-download"></i> Export Data</a></li>
+                        <li><a href="#" id="import-data-link"><i class="fas fa-upload"></i> Import Data</a></li>
+                        <li><a href="#" id="clear-data-link"><i class="fas fa-trash"></i> Clear All Data</a></li>
+                        <li><a href="#" id="help-link"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+                    </ul>
+                </div> -->
+                
+                <div class="footer-stats">
+                    <h4>App Statistics</h4>
+                    <div class="stats-grid">
+                        <div class="stat">
+                            <span class="stat-number" id="footer-total-transactions">0</span>
+                            <span class="stat-label">Total Transactions</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="footer-days-tracked">1</span>
+                            <span class="stat-label">Days Tracked</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="footer-categories">12</span>
+                            <span class="stat-label">Categories</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Expense Tracker</p>
+                <div class="footer-credits">
+                    <span>Developed by Ishika Modi</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!--MODALS-->
+    <!-- Edit Transaction Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Transaction</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Edit form will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirmation</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+                <button class="btn btn-danger" id="confirm-ok">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <!-- <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-upload"></i> Import Transactions</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="import-options">
+                    <div class="import-option">
+                        <i class="fas fa-file-csv fa-2x"></i>
+                        <h4>Import from CSV</h4>
+                        <p>Upload a CSV file with your transactions</p>
+                        <input type="file" id="csv-file" accept=".csv" style="display: none;">
+                        <button class="btn btn-outline" id="browse-csv">
+                            <i class="fas fa-folder-open"></i> Browse CSV
+                        </button>
+                    </div>
+                    <div class="import-option">
+                        <i class="fas fa-file-json fa-2x"></i>
+                        <h4>Import from JSON</h4>
+                        <p>Upload a JSON file with your transactions</p>
+                        <input type="file" id="json-file" accept=".json" style="display: none;">
+                        <button class="btn btn-outline" id="browse-json">
+                            <i class="fas fa-folder-open"></i> Browse JSON
+                        </button>
+                    </div>
+                </div>
+                <div class="import-preview" id="import-preview" style="display: none;">
+                    <h4>Preview</h4>
+                    <div id="preview-content"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="import-cancel">Cancel</button>
+                <button class="btn btn-primary" id="import-submit" disabled>Import Transactions</button>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Notification Toast -->
+    <div id="notification" class="toast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message"></span>
+        </div>
+        <button class="toast-close">&times;</button>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="script.js"></script>
+</body>
+</html>
